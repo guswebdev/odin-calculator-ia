@@ -1,3 +1,14 @@
+const state = {
+    firstNumber: "",
+    operator: "",
+    secondNumber: "",
+    display: "",
+    counterDecimal: 0
+}
+
+const $display = document.querySelector("#display");
+const $btns = document.querySelectorAll("[data-key]");
+const $btnsNumbers = document.querySelectorAll(`[data-type="number"]`)
 
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
@@ -30,4 +41,31 @@ const operate = (operator, a, b) => {
     return result;
 }
 
-console.log(operate(".", 3, 2))
+const setDisplay = (data) => { state.display += data }
+
+const renderDisplay = () => { $display.textContent = state.display }
+
+const numberKeyboard = (target) => {
+    console.log(target.dataset.key)
+
+    if(target.dataset.key === "."){
+        if(state.display.includes(".")){
+            console.log("No se puede agregar otro punto")
+            return
+        };
+    }
+    
+    setDisplay(target.dataset.key)
+    renderDisplay();
+
+}
+
+const handleClick = (e) => {
+    const $target = e.target;
+
+    if ($target.matches(`[data-type="number"]`) || $target.matches(`[data-type="decimal"]`)) {
+        numberKeyboard($target)
+    }
+}
+
+document.addEventListener("click", handleClick);
