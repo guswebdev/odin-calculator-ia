@@ -1,0 +1,157 @@
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f0f0;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.container {
+    width: 90%;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.btn {
+    display: inline-block;
+    background-color: #222;
+    color: #fff;
+    padding: .5rem;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #fff;
+    color: #222;
+}
+
+.header,
+.footer {
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.footer a {
+    color: white;
+}
+
+.footer a:hover {
+    color: gray;
+}
+
+/* Estilos Particulares */
+.calculator-container {
+    width: 275px;
+    height: 325px;
+    background-color: lightslategray;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    border: solid thin #222;
+}
+
+#display {
+    max-width: 100%;
+    background-color: darkseagreen;
+    padding: .5rem;
+    font-size: 24px;
+    font-family: monospace;
+    overflow: hidden;
+    color: #222;
+}
+
+.calculator-keyboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-template-areas: "sumar restar multiplicar dividir"
+        "siete ocho nueve ac"
+        "cuatro cinco seis c"
+        "uno dos tres igual"
+        "cero cero punto igual";
+    gap: .5rem;
+}
+
+[data-key="+"] {
+    grid-area: sumar;
+}
+
+[data-key="-"] {
+    grid-area: restar;
+}
+
+[data-key="*"] {
+    grid-area: multiplicar;
+}
+
+[data-key="/"] {
+    grid-area: dividir;
+}
+
+[data-key="7"] {
+    grid-area: siete;
+}
+
+[data-key="8"] {
+    grid-area: ocho;
+}
+
+[data-key="9"] {
+    grid-area: nueve;
+}
+
+[data-key="ac"] {
+    grid-area: ac;
+}
+
+[data-key="1"] {
+    grid-area: uno;
+}
+
+[data-key="2"] {
+    grid-area: dos;
+}
+
+[data-key="3"] {
+    grid-area: tres;
+}
+
+[data-key="="] {
+    grid-area: igual;
+}
+
+[data-key="0"] {
+    grid-area: cero;
+}
+
+[data-key="."] {
+    grid-area: punto;
+}
