@@ -3,7 +3,7 @@ const state = {
     operator: "",
     secondNumber: "",
     display: "",
-    counterDecimal: 0
+    result: ""
 }
 
 const $display = document.querySelector("#display");
@@ -43,21 +43,62 @@ const operate = (operator, a, b) => {
 
 const setDisplay = (data) => { state.display += data }
 
-const renderDisplay = () => { $display.textContent = state.display }
+const renderDisplay = (data) => { $display.textContent = data }
+
+const clearDisplay = () => { state.display = "" }
+
+const clearState = () => {
+    //state.firstNumber = ""
+    //state.operator = ""
+    state.secondNumber = ""
+    //state.display = ""
+    //state.result = ""
+}
 
 const numberKeyboard = (target) => {
     console.log(target.dataset.key)
 
-    if(target.dataset.key === "."){
-        if(state.display.includes(".")){
+    if (target.dataset.key === ".") {
+        if (state.display.includes(".")) {
             console.log("No se puede agregar otro punto")
             return
         };
     }
-    
-    setDisplay(target.dataset.key)
-    renderDisplay();
 
+    setDisplay(target.dataset.key)
+    renderDisplay(state.display);
+
+}
+
+const operatorKeyboard = (target) => {
+    if (state.firstNumber === "" || state.operator === "") {
+        state.firstNumber = Number(state.display);
+        state.operator = target.dataset.key;
+        clearDisplay();
+    } else {
+        state.secondNumber = Number(state.display);
+        state.result = operate(state.operator, state.firstNumber, state.secondNumber);
+        state.firstNumber = state.result;
+        state.secondNumber = "";
+        state.operator = target.dataset.key;
+        clearDisplay();
+        renderDisplay(state.result);
+    }
+
+    console.log(state);
+}
+
+const solve = () => {
+
+    state.secondNumber = Number(state.display)
+    state.result = operate(state.operator, state.firstNumber, state.secondNumber)
+    state.firstNumber = state.result
+    state.display = String(state.result)
+
+    renderDisplay(state.display)
+    state.operator = "";
+    state.secondNumber = "";
+    console.log(state)
 }
 
 const handleClick = (e) => {
@@ -65,6 +106,12 @@ const handleClick = (e) => {
 
     if ($target.matches(`[data-type="number"]`) || $target.matches(`[data-type="decimal"]`)) {
         numberKeyboard($target)
+    }
+    if ($target.matches(`[data-type="operator"]`)) {
+        operatorKeyboard($target)
+    }
+    if ($target.matches(`[data-type="result"]`)) {
+        solve()
     }
 }
 
