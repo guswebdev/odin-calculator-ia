@@ -41,51 +41,82 @@ const operate = (operator, a, b) => {
     return result;
 }
 
-const setDisplay = (data) => { state.display += data }
+const setDisplay = (data) => {
+    (state.display === "0") ? state.display = data : state.display += data
+}
 
 const renderDisplay = (data) => { $display.textContent = data }
 
 const clearDisplay = () => { state.display = "" }
 
-const clearState = () => {
-    //state.firstNumber = ""
-    //state.operator = ""
-    state.secondNumber = ""
-    //state.display = ""
-    //state.result = ""
-}
+const validateDecimal = (key) => {
+    let result = true;
 
-const numberKeyboard = (target) => {
-    console.log(target.dataset.key)
-
-    if (target.dataset.key === ".") {
+    if (key === ".") {
         if (state.display.includes(".")) {
             console.log("No se puede agregar otro punto")
-            return
+            result = false
         };
     }
 
-    setDisplay(target.dataset.key)
-    renderDisplay(state.display);
+    return result;
+}
+
+const numberKeyboard = (target) => {
+
+    if (typeof target === "object") {
+
+        if (!validateDecimal()) return
+
+        setDisplay(target.dataset.key)
+        renderDisplay(state.display);
+
+    } else {
+        if (!validateDecimal()) return
+
+        setDisplay(target)
+        renderDisplay(state.display);
+    }
+
 
 }
 
 const operatorKeyboard = (target) => {
-    if (state.firstNumber === "" || state.operator === "") {
-        state.firstNumber = Number(state.display);
-        state.operator = target.dataset.key;
-        clearDisplay();
+
+    if (typeof target === "object") {
+        if (state.firstNumber === "" || state.operator === "") {
+            state.firstNumber = Number(state.display);
+            state.operator = target.dataset.key;
+            clearDisplay();
+        } else {
+            state.secondNumber = Number(state.display);
+            state.result = operate(state.operator, state.firstNumber, state.secondNumber);
+            state.firstNumber = state.result;
+            state.secondNumber = "";
+            state.operator = target.dataset.key;
+            clearDisplay();
+            renderDisplay(state.result);
+        }
+
+        console.log(state);
     } else {
-        state.secondNumber = Number(state.display);
-        state.result = operate(state.operator, state.firstNumber, state.secondNumber);
-        state.firstNumber = state.result;
-        state.secondNumber = "";
-        state.operator = target.dataset.key;
-        clearDisplay();
-        renderDisplay(state.result);
+        if (state.firstNumber === "" || state.operator === "") {
+            state.firstNumber = Number(state.display);
+            state.operator = target;
+            clearDisplay();
+        } else {
+            state.secondNumber = Number(state.display);
+            state.result = operate(state.operator, state.firstNumber, state.secondNumber);
+            state.firstNumber = state.result;
+            state.secondNumber = "";
+            state.operator = target;
+            clearDisplay();
+            renderDisplay(state.result);
+        }
+
+        console.log(state);
     }
 
-    console.log(state);
 }
 
 const solve = () => {
@@ -101,6 +132,25 @@ const solve = () => {
     console.log(state)
 }
 
+const allClear = () => {
+
+    state.display = "0"
+    state.firstNumber = ""
+    state.secondNumber = ""
+    state.result = ""
+    state.operator = ""
+
+    renderDisplay(state.display)
+
+    console.log(state)
+}
+const clear = () => {
+
+    (state.display.length > 1) ? state.display = state.display.slice(0, -1) : state.display = "0"
+
+    renderDisplay(state.display)
+}
+
 const handleClick = (e) => {
     const $target = e.target;
 
@@ -113,6 +163,36 @@ const handleClick = (e) => {
     if ($target.matches(`[data-type="result"]`)) {
         solve()
     }
+    if ($target.matches(`[data-type="allClear"]`)) {
+        allClear();
+    }
+    if ($target.matches(`[data-type="clear"]`)) {
+        clear();
+    }
 }
 
 document.addEventListener("click", handleClick);
+
+const handleKeydown = (e) => {
+
+    console.log(e.key)
+    if (e.key >= 0 && e.key <= 9 || e.key === ".") {
+        numberKeyboard(e.key)
+    }
+
+    if (e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/") {
+        operatorKeyboard(e.key)
+    }
+
+    if (e.key === "Enter") {
+        solve()
+    }
+    if (e.key === "Delete") {
+        allClear()
+    }
+    if (e.key === "Backspace") {
+        clear()
+    }
+}
+
+document.addEventListener("keydown", handleKeydown);
