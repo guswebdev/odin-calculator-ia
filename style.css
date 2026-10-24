@@ -1,3 +1,6 @@
+/* ==========================================
+   1. RESET Y ESTILOS BASE
+   ========================================== */
 *,
 *::after,
 *::before {
@@ -18,6 +21,15 @@ body {
     background-color: #f0f0f0;
 }
 
+/* ==========================================
+   2. LAYOUT GENERAL (Header, Main, Footer)
+   ========================================== */
+.container {
+    width: 90%;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
 main {
     flex: 1;
     display: flex;
@@ -25,28 +37,6 @@ main {
     justify-content: center;
     align-items: center;
     gap: 2rem;
-}
-
-.container {
-    width: 90%;
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.btn {
-    display: inline-block;
-    background-color: #222;
-    color: #fff;
-    padding: .5rem;
-    border: none;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.btn:hover {
-    background-color: #fff;
-    color: #222;
 }
 
 .header,
@@ -65,7 +55,9 @@ main {
     color: gray;
 }
 
-/* Estilos Particulares */
+/* ==========================================
+   3. COMPONENTE: CALCULADORA Y DISPLAY
+   ========================================== */
 .calculator-container {
     width: 275px;
     height: 325px;
@@ -90,11 +82,31 @@ main {
     border: solid thin #222;
 }
 
+/* ==========================================
+   4. COMPONENTE: TECLADO Y BOTONES
+   ========================================== */
+.btn {
+    display: inline-block;
+    background-color: #222;
+    color: #fff;
+    padding: .5rem;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #fff;
+    color: #222;
+}
+
 .calculator-keyboard {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(5, 1fr);
-    grid-template-areas: "sumar restar multiplicar dividir"
+    grid-template-areas: 
+        "sumar restar multiplicar dividir"
         "siete ocho nueve ac"
         "cuatro cinco seis c"
         "uno dos tres igual"
@@ -102,58 +114,18 @@ main {
     gap: .5rem;
 }
 
-[data-key="+"] {
-    grid-area: sumar;
-}
-
-[data-key="-"] {
-    grid-area: restar;
-}
-
-[data-key="*"] {
-    grid-area: multiplicar;
-}
-
-[data-key="/"] {
-    grid-area: dividir;
-}
-
-[data-key="7"] {
-    grid-area: siete;
-}
-
-[data-key="8"] {
-    grid-area: ocho;
-}
-
-[data-key="9"] {
-    grid-area: nueve;
-}
-
-[data-key="ac"] {
-    grid-area: ac;
-}
-
-[data-key="1"] {
-    grid-area: uno;
-}
-
-[data-key="2"] {
-    grid-area: dos;
-}
-
-[data-key="3"] {
-    grid-area: tres;
-}
-
-[data-key="="] {
-    grid-area: igual;
-}
-
-[data-key="0"] {
-    grid-area: cero;
-}
-
-[data-key="."] {
-    grid-area: punto;
-}
+/* Asignación de Grid Areas */
+[data-key="+"] { grid-area: sumar; }
+[data-key="-"] { grid-area: restar; }
+[data-key="*"] { grid-area: multiplicar; }
+[data-key="/"] { grid-area: dividir; }
+[data-key="7"] { grid-area: siete; }
+[data-key="8"] { grid-area: ocho; }
+[data-key="9"] { grid-area: nueve; }
+[data-key="ac"] { grid-area: ac; }
+[data-key="1"] { grid-area: uno; }
+[data-key="2"] { grid-area: dos; }
+[data-key="3"] { grid-area: tres; }
+[data-key="="] { grid-area: igual; }
+[data-key="0"] { grid-area: cero; }
+[data-key="."] { grid-area: punto; }

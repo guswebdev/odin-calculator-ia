@@ -2,18 +2,19 @@ const state = {
     firstNumber: "",
     operator: "",
     secondNumber: "",
-    display: "",
-    result: ""
+    display: "0",
+    result: "",
+    shouldResetDisplay: false
 }
 
 const $display = document.querySelector("#display");
-const $btns = document.querySelectorAll("[data-key]");
-const $btnsNumbers = document.querySelectorAll(`[data-type="number"]`)
+const $buttons = document.querySelectorAll("[data-key]");
+const $numberButtons = document.querySelectorAll(`[data-type="number"]`)
 
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
-const divide = (a, b) => (b === 0) ? "Division por cero" : a / b;
+const divide = (a, b) => (b === 0) ? "Error" : a / b;
 
 const operate = (operator, a, b) => {
 
@@ -32,17 +33,24 @@ const operate = (operator, a, b) => {
         case "/":
             result = divide(a, b);
             break;
-
-        default:
-            console.log("OPERADOR NO VALIDO")
-            break;
     }
 
     return result;
 }
 
-const setDisplay = (data) => {
-    (state.display === "0") ? state.display = data : state.display += data
+const updateDisplayState = (data) => {
+    if (state.shouldResetDisplay) {
+        state.display = (data === ".") ? "0." : data;
+        state.shouldResetDisplay = false;
+    } else {
+        if (state.display === "0" && data !== ".") {
+            state.display = data;
+        } else if (state.display === "0" && data === ".") {
+            state.display += data;
+        } else {
+            state.display += data;
+        }
+    }
 }
 
 const renderDisplay = (data) => { $display.textContent = data }
@@ -50,76 +58,44 @@ const renderDisplay = (data) => { $display.textContent = data }
 const clearDisplay = () => { state.display = "" }
 
 const validateDecimal = (key) => {
-    let result = true;
-
-    if (key === ".") {
-        if (state.display.includes(".")) {
-            console.log("No se puede agregar otro punto")
-            result = false
-        };
-    }
-
-    return result;
+    if (key === "." && state.display.includes(".")) return false;
+    return true;
 }
 
-const numberKeyboard = (target) => {
+const handleNumberInput = (keyValue) => {
 
-    if (typeof target === "object") {
+    if (!validateDecimal(keyValue)) return
 
-        if (!validateDecimal()) return
+    if (state.operator === "" && state.firstNumber !== "" && state.shouldResetDisplay) {
+        state.firstNumber = "";
+    }
 
-        setDisplay(target.dataset.key)
-        renderDisplay(state.display);
+    updateDisplayState(keyValue)
+    renderDisplay(state.display);
 
+}
+
+const handleOperatorInput = (operatorValue) => {
+
+    if (state.firstNumber === "" || state.operator === "") {
+        state.firstNumber = Number(state.display);
+        state.operator = operatorValue;
+        clearDisplay();
     } else {
-        if (!validateDecimal()) return
-
-        setDisplay(target)
-        renderDisplay(state.display);
+        state.secondNumber = Number(state.display);
+        state.result = operate(state.operator, state.firstNumber, state.secondNumber);
+        state.firstNumber = state.result;
+        state.secondNumber = "";
+        state.operator = operatorValue;
+        clearDisplay();
+        renderDisplay(state.result);
     }
-
-
+    state.shouldResetDisplay = true;
 }
 
-const operatorKeyboard = (target) => {
+const calculateResult = () => {
 
-    if (typeof target === "object") {
-        if (state.firstNumber === "" || state.operator === "") {
-            state.firstNumber = Number(state.display);
-            state.operator = target.dataset.key;
-            clearDisplay();
-        } else {
-            state.secondNumber = Number(state.display);
-            state.result = operate(state.operator, state.firstNumber, state.secondNumber);
-            state.firstNumber = state.result;
-            state.secondNumber = "";
-            state.operator = target.dataset.key;
-            clearDisplay();
-            renderDisplay(state.result);
-        }
-
-        console.log(state);
-    } else {
-        if (state.firstNumber === "" || state.operator === "") {
-            state.firstNumber = Number(state.display);
-            state.operator = target;
-            clearDisplay();
-        } else {
-            state.secondNumber = Number(state.display);
-            state.result = operate(state.operator, state.firstNumber, state.secondNumber);
-            state.firstNumber = state.result;
-            state.secondNumber = "";
-            state.operator = target;
-            clearDisplay();
-            renderDisplay(state.result);
-        }
-
-        console.log(state);
-    }
-
-}
-
-const solve = () => {
+    if (state.operator === "" || state.firstNumber === "") return;
 
     state.secondNumber = Number(state.display)
     state.result = operate(state.operator, state.firstNumber, state.secondNumber)
@@ -129,7 +105,8 @@ const solve = () => {
     renderDisplay(state.display)
     state.operator = "";
     state.secondNumber = "";
-    console.log(state)
+
+    state.shouldResetDisplay = true;
 }
 
 const allClear = () => {
@@ -142,9 +119,8 @@ const allClear = () => {
 
     renderDisplay(state.display)
 
-    console.log(state)
 }
-const clear = () => {
+const deleteLastChar = () => {
 
     (state.display.length > 1) ? state.display = state.display.slice(0, -1) : state.display = "0"
 
@@ -155,19 +131,19 @@ const handleClick = (e) => {
     const $target = e.target;
 
     if ($target.matches(`[data-type="number"]`) || $target.matches(`[data-type="decimal"]`)) {
-        numberKeyboard($target)
+        handleNumberInput($target.dataset.key)
     }
     if ($target.matches(`[data-type="operator"]`)) {
-        operatorKeyboard($target)
+        handleOperatorInput($target.dataset.key)
     }
     if ($target.matches(`[data-type="result"]`)) {
-        solve()
+        calculateResult()
     }
     if ($target.matches(`[data-type="allClear"]`)) {
         allClear();
     }
     if ($target.matches(`[data-type="clear"]`)) {
-        clear();
+        deleteLastChar();
     }
 }
 
@@ -175,23 +151,23 @@ document.addEventListener("click", handleClick);
 
 const handleKeydown = (e) => {
 
-    console.log(e.key)
+
     if (e.key >= 0 && e.key <= 9 || e.key === ".") {
-        numberKeyboard(e.key)
+        handleNumberInput(e.key)
     }
 
     if (e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/") {
-        operatorKeyboard(e.key)
+        handleOperatorInput(e.key)
     }
 
     if (e.key === "Enter") {
-        solve()
+        calculateResult()
     }
     if (e.key === "Delete") {
         allClear()
     }
     if (e.key === "Backspace") {
-        clear()
+        deleteLastChar()
     }
 }
 
